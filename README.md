@@ -8,5 +8,23 @@ Gradle plugin to ease structuring and naming projects.
 
 ## How to Use
 
+`settings.gradle(.kts)`
+
 ```kotlin
+plugins {
+    id("io.github.sgtsilvio.gradle.structure") version "0.1.0"
+}
+
+structure {
+    rootProject("example-application") {
+        project("model")
+        project("client") {
+            project("ui")
+        }
+        project("server") {
+            project("database")
+            project("rest-api")
+        }
+    }
+}
 ```
