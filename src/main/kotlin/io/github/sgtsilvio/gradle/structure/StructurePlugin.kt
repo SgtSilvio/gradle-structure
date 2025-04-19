@@ -2,6 +2,7 @@ package io.github.sgtsilvio.gradle.structure
 
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
+import org.gradle.kotlin.dsl.create
 
 /**
  * @author Silvio Giebl
@@ -10,6 +11,6 @@ import org.gradle.api.initialization.Settings
 class StructurePlugin : Plugin<Settings> {
 
     override fun apply(settings: Settings) {
-        TODO("Not yet implemented")
+        settings.extensions.create("structure", StructureExtension::class, settings)
     }
 }
