@@ -8,7 +8,7 @@ Gradle plugin to ease structuring and naming projects.
 
 ## How to Use
 
-`settings.gradle(.kts)`
+`settings.gradle.kts`
 
 ```kotlin
 plugins {
@@ -16,7 +16,7 @@ plugins {
 }
 
 structure {
-    rootProject("example-application") {
+    rootProject("example-app") {
         project("model")
         project("client") {
             project("ui")
@@ -28,3 +28,21 @@ structure {
     }
 }
 ```
+
+This results in the following fully qualified project names:
+- `example-app`
+- `example-app-model`
+- `example-app-client`
+- `example-app-client-ui`
+- `example-app-server`
+- `example-app-server-database`
+- `example-app-server-rest-api`
+
+Even though all project names are fully qualified, you can still use short project names in task paths on the command line. The following list shows the path for the `build` task for each project:
+- `./gradlew :build`
+- `./gradlew :model:build`
+- `./gradlew :client:build`
+- `./gradlew :client:ui:build`
+- `./gradlew :server:build`
+- `./gradlew :server:database:build`
+- `./gradlew :server:rest-api:build`
