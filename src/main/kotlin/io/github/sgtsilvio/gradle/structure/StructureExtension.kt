@@ -5,7 +5,7 @@ import org.gradle.api.initialization.ProjectDescriptor
 import org.gradle.api.initialization.Settings
 import javax.inject.Inject
 
-abstract class StructureExtension @Inject constructor(settings: Settings) {
+abstract class StructureExtension @Inject constructor(private val settings: Settings) {
 
     private var rootProjectName: String? = null
     private val rootProjectDefinition = ProjectDefinition(settings.rootProject, "", settings)
@@ -18,12 +18,43 @@ abstract class StructureExtension @Inject constructor(settings: Settings) {
             throw IllegalStateException("rootProject name must always be the same, expected $rootProjectName, got $name")
         }
         configuration.execute(rootProjectDefinition)
+        updateTaskPaths()
+    }
+
+    private fun updateTaskPaths() {
+        val startParameter = settings.gradle.startParameter
+        mapTaskPaths(startParameter.taskNames, startParameter::setTaskNames)
+        mapTaskPaths(startParameter.excludedTaskNames, startParameter::setExcludedTaskNames)
+    }
+
+    private inline fun mapTaskPaths(taskPaths: Iterable<String>, onChange: (List<String>) -> Unit) {
+        val mappedTaskNames = taskPaths.map(::mapTaskPath)
+        if (mappedTaskNames != taskPaths) {
+            onChange(mappedTaskNames)
+        }
+    }
+
+    private fun mapTaskPath(taskPath: String): String {
+        val parts = taskPath.removePrefix(":").split(':')
+        if (parts.size == 1) {
+            return taskPath
+        }
+        var projectDefinition: ProjectDefinition? = rootProjectDefinition
+        var mappedTaskName = ""
+        for (i in 0..(parts.size - 2)) {
+            projectDefinition = projectDefinition!!.children[parts[i]]
+            if (projectDefinition == null) {
+                return taskPath
+            }
+            mappedTaskName += ":${projectDefinition.descriptor.name}"
+        }
+        return "$mappedTaskName:${parts.last()}"
     }
 }
 
 class ProjectDefinition(val descriptor: ProjectDescriptor, private val path: String, private val settings: Settings) {
 
-    private val children = HashMap<String, ProjectDefinition>()
+    internal val children = HashMap<String, ProjectDefinition>()
 
     private fun getOrAddChild(name: String): ProjectDefinition {
         return children.getOrPut(name) {
