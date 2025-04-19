@@ -1,1 +1,1 @@
-rootProject.name = "gradle-project-structure"
+rootProject.name = "gradle-structure"

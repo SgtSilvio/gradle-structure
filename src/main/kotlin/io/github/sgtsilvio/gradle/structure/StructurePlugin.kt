@@ -1,4 +1,4 @@
-package io.github.sgtsilvio.gradle.project.structure
+package io.github.sgtsilvio.gradle.structure
 
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
@@ -7,7 +7,7 @@ import org.gradle.api.initialization.Settings
  * @author Silvio Giebl
  */
 @Suppress("unused")
-class ProjectStructurePlugin : Plugin<Settings> {
+class StructurePlugin : Plugin<Settings> {
 
     override fun apply(settings: Settings) {
         TODO("Not yet implemented")

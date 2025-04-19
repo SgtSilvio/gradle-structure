@@ -9,7 +9,7 @@ plugins {
 group = "io.github.sgtsilvio.gradle"
 
 metadata {
-    readableName = "Gradle Project Structure Plugin"
+    readableName = "Gradle Structure Plugin"
     description = "Gradle plugin to ease structuring and naming projects"
     license {
         apache2()
@@ -37,9 +37,9 @@ repositories {
 
 gradlePlugin {
     plugins {
-        create("projectStructure") {
-            id = "$group.project-structure"
-            implementationClass = "$group.project.structure.ProjectStructurePlugin"
+        create("structure") {
+            id = "$group.$name"
+            implementationClass = "$group.$name.StructurePlugin"
             tags = listOf("project-structure", "multi-project", "subprojects", "project-naming")
         }
     }
