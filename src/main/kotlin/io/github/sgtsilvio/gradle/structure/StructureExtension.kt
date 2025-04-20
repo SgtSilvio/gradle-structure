@@ -12,8 +12,7 @@ import javax.inject.Inject
 abstract class StructureExtension @Inject constructor(private val settings: Settings, objectFactory: ObjectFactory) {
 
     private var rootProjectName: String? = null
-    internal val rootProjectDefinition =
-        objectFactory.newInstance<ProjectDefinition>(settings.rootProject, "", settings)
+    internal val rootProjectDefinition = objectFactory.newInstance<ProjectDefinition>(settings.rootProject, settings)
 
     fun rootProject(name: String, configuration: Action<in ProjectDefinition>) {
         if (rootProjectName == null) {
@@ -29,7 +28,6 @@ abstract class StructureExtension @Inject constructor(private val settings: Sett
 @NonExtensible
 abstract class ProjectDefinition @Inject constructor(
     val descriptor: ProjectDescriptor,
-    private val path: String,
     private val settings: Settings,
     private val objectFactory: ObjectFactory,
 ) {
@@ -38,11 +36,11 @@ abstract class ProjectDefinition @Inject constructor(
 
     private fun getOrAddChild(name: String): ProjectDefinition {
         return children.getOrPut(name) {
-            val childPath = "$path:${descriptor.name}-$name"
+            val childPath = "${if (descriptor.path == ":") "" else descriptor.path}:${descriptor.name}-$name"
             settings.include(childPath)
             val childDescriptor = settings.project(childPath)
             childDescriptor.projectDir = descriptor.projectDir.resolve(name)
-            objectFactory.newInstance<ProjectDefinition>(childDescriptor, childPath, settings)
+            objectFactory.newInstance<ProjectDefinition>(childDescriptor, settings)
         }
     }
 
