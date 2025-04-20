@@ -13,8 +13,29 @@ class StructurePlugin : Plugin<Settings> {
 
     override fun apply(settings: Settings) {
         val extension = settings.extensions.create("structure", StructureExtension::class, settings)
-        settings.gradle.projectsLoaded {
-            updateTaskPaths(startParameter, extension.rootProjectDefinition)
+        val rootProjectDefinition = extension.rootProjectDefinition
+        settings.gradle.settingsEvaluated {
+            val projectPathMapping = ProjectPathMapping()
+            projectPathMapping.fill(rootProjectDefinition, "", "")
+            updateTaskPaths(startParameter, rootProjectDefinition)
+            gradle.beforeProject {
+//            gradle.lifecycle.beforeProject {
+                extensions.create("structure", StructureProjectExtension::class, projectPathMapping)
+            }
+        }
+    }
+
+    private fun ProjectPathMapping.fill(
+        parentProjectDefinition: ProjectDefinition,
+        parentShortPath: String,
+        parentFullPath: String,
+    ) {
+        for ((pathName, projectDefinition) in parentProjectDefinition.children) {
+            val shortPath = "$parentShortPath:$pathName"
+            val fullPath = "$parentFullPath:${projectDefinition.descriptor.name}"
+            gradlePathToShortPath[projectDefinition.descriptor.path] = shortPath
+            shortPathToFullPath[shortPath] = fullPath
+            fill(projectDefinition, shortPath, fullPath)
         }
     }
 
@@ -50,4 +71,9 @@ class StructurePlugin : Plugin<Settings> {
         }
         return "$mappedTaskName:${parts.last()}"
     }
+}
+
+internal class ProjectPathMapping {
+    val gradlePathToShortPath = HashMap<String, String>()
+    val shortPathToFullPath = HashMap<String, String>()
 }
