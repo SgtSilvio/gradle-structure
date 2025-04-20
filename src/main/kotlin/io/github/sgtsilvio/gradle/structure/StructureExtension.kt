@@ -9,7 +9,7 @@ import org.gradle.kotlin.dsl.newInstance
 import javax.inject.Inject
 
 @NonExtensible
-abstract class StructureExtension @Inject constructor(private val settings: Settings, objectFactory: ObjectFactory) {
+abstract class StructureExtension @Inject constructor(settings: Settings, objectFactory: ObjectFactory) {
 
     private var rootProjectName: String? = null
     internal val rootProjectDefinition = objectFactory.newInstance<ProjectDefinition>(settings.rootProject, settings)
