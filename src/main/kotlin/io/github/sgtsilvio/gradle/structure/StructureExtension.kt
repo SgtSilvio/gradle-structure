@@ -1,14 +1,18 @@
 package io.github.sgtsilvio.gradle.structure
 
 import org.gradle.api.Action
+import org.gradle.api.NonExtensible
 import org.gradle.api.initialization.ProjectDescriptor
 import org.gradle.api.initialization.Settings
+import org.gradle.api.model.ObjectFactory
+import org.gradle.kotlin.dsl.newInstance
 import javax.inject.Inject
 
-abstract class StructureExtension @Inject constructor(private val settings: Settings) {
+@NonExtensible
+abstract class StructureExtension @Inject constructor(private val settings: Settings, objectFactory: ObjectFactory) {
 
     private var rootProjectName: String? = null
-    private val rootProjectDefinition = ProjectDefinition(settings.rootProject, "", settings)
+    private val rootProjectDefinition = objectFactory.newInstance<ProjectDefinition>(settings.rootProject, "", settings)
 
     fun rootProject(name: String, configuration: Action<in ProjectDefinition>) {
         if (rootProjectName == null) {
@@ -52,7 +56,13 @@ abstract class StructureExtension @Inject constructor(private val settings: Sett
     }
 }
 
-class ProjectDefinition(val descriptor: ProjectDescriptor, private val path: String, private val settings: Settings) {
+@NonExtensible
+abstract class ProjectDefinition @Inject constructor(
+    val descriptor: ProjectDescriptor,
+    private val path: String,
+    private val settings: Settings,
+    private val objectFactory: ObjectFactory,
+) {
 
     internal val children = HashMap<String, ProjectDefinition>()
 
@@ -62,7 +72,7 @@ class ProjectDefinition(val descriptor: ProjectDescriptor, private val path: Str
             settings.include(childPath)
             val childDescriptor = settings.project(childPath)
             childDescriptor.projectDir = descriptor.projectDir.resolve(name)
-            ProjectDefinition(childDescriptor, childPath, settings)
+            objectFactory.newInstance<ProjectDefinition>(childDescriptor, childPath, settings)
         }
     }
 
