@@ -12,7 +12,8 @@ import javax.inject.Inject
 abstract class StructureExtension @Inject constructor(private val settings: Settings, objectFactory: ObjectFactory) {
 
     private var rootProjectName: String? = null
-    private val rootProjectDefinition = objectFactory.newInstance<ProjectDefinition>(settings.rootProject, "", settings)
+    internal val rootProjectDefinition =
+        objectFactory.newInstance<ProjectDefinition>(settings.rootProject, "", settings)
 
     fun rootProject(name: String, configuration: Action<in ProjectDefinition>) {
         if (rootProjectName == null) {
@@ -22,37 +23,6 @@ abstract class StructureExtension @Inject constructor(private val settings: Sett
             throw IllegalStateException("rootProject name must always be the same, expected $rootProjectName, got $name")
         }
         configuration.execute(rootProjectDefinition)
-        updateTaskPaths()
-    }
-
-    private fun updateTaskPaths() {
-        val startParameter = settings.gradle.startParameter
-        mapTaskPaths(startParameter.taskNames, startParameter::setTaskNames)
-        mapTaskPaths(startParameter.excludedTaskNames, startParameter::setExcludedTaskNames)
-    }
-
-    private inline fun mapTaskPaths(taskPaths: Iterable<String>, onChange: (List<String>) -> Unit) {
-        val mappedTaskNames = taskPaths.map(::mapTaskPath)
-        if (mappedTaskNames != taskPaths) {
-            onChange(mappedTaskNames)
-        }
-    }
-
-    private fun mapTaskPath(taskPath: String): String {
-        val parts = taskPath.removePrefix(":").split(':')
-        if (parts.size == 1) {
-            return taskPath
-        }
-        var projectDefinition: ProjectDefinition? = rootProjectDefinition
-        var mappedTaskName = ""
-        for (i in 0..(parts.size - 2)) {
-            projectDefinition = projectDefinition!!.children[parts[i]]
-            if (projectDefinition == null) {
-                return taskPath
-            }
-            mappedTaskName += ":${projectDefinition.descriptor.name}"
-        }
-        return "$mappedTaskName:${parts.last()}"
     }
 }
 
