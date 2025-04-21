@@ -13,14 +13,14 @@ import java.io.File
 class StructurePlugin : Plugin<Settings> {
 
     override fun apply(settings: Settings) {
-        val extension = settings.extensions.create("structure", StructureExtension::class, settings)
+        val extension = settings.extensions.create(EXTENSION_NAME, StructureExtension::class, settings)
         val rootProjectDefinition = extension.rootProjectDefinition
         settings.gradle.settingsEvaluated {
             val projectPathMapping = ProjectPathMapping(rootProjectDefinition)
             updateTaskPaths(startParameter, projectPathMapping, rootDir)
             gradle.beforeProject {
 //            gradle.lifecycle.beforeProject {
-                extensions.create("structure", StructureProjectExtension::class, projectPathMapping)
+                extensions.create(EXTENSION_NAME, StructureProjectExtension::class, projectPathMapping)
             }
         }
     }
@@ -80,3 +80,5 @@ class StructurePlugin : Plugin<Settings> {
         // TODO if was relative, make relative again
     }
 }
+
+const val EXTENSION_NAME = "structure"
