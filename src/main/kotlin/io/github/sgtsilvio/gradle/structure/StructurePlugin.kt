@@ -70,15 +70,12 @@ class StructurePlugin : Plugin<Settings> {
         }
         val projectPath = taskPath.substring(0, projectPathEndIndex)
         val isAbsolute = projectPath.startsWith(':')
-        val absoluteProjectPath = when {
-            isAbsolute -> projectPath
-            currentProjectShortPath == null -> return taskPath
-            else -> currentProjectShortPath.resolveProjectPath(projectPath)
+        val absoluteProjectPath = if (isAbsolute) projectPath else {
+            (currentProjectShortPath ?: return taskPath).resolveProjectPath(projectPath)
         }
         val projectFullPath = projectPathMapping.shortToFull[absoluteProjectPath] ?: return taskPath
-        val projectRelativeFullPath = when {
-            isAbsolute -> projectFullPath
-            else -> projectFullPath.split(':').takeLast(projectPath.count { it == ':' } + 1).joinToString(":")
+        val projectRelativeFullPath = if (isAbsolute) projectFullPath else {
+            projectFullPath.split(':').takeLast(projectPath.count { it == ':' } + 1).joinToString(":")
         }
         val taskName = taskPath.substring(projectPathEndIndex + 1)
         return "$projectRelativeFullPath:$taskName"
