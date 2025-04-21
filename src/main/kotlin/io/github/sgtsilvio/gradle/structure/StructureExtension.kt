@@ -6,6 +6,7 @@ import org.gradle.api.initialization.ProjectDescriptor
 import org.gradle.api.initialization.Settings
 import org.gradle.api.model.ObjectFactory
 import org.gradle.kotlin.dsl.newInstance
+import org.gradle.kotlin.dsl.property
 import javax.inject.Inject
 
 /**
@@ -16,6 +17,8 @@ abstract class StructureExtension @Inject constructor(settings: Settings, object
 
     private var rootProjectName: String? = null
     internal val rootProjectDefinition = objectFactory.newInstance<ProjectDefinition>(settings.rootProject, settings)
+
+    val group = objectFactory.property<String>()
 
     fun rootProject(name: String, configuration: Action<in ProjectDefinition>) {
         if (rootProjectName == null) {

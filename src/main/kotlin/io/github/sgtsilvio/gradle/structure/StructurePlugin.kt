@@ -15,14 +15,13 @@ class StructurePlugin : Plugin<Settings> {
 
     override fun apply(settings: Settings) {
         val extension = settings.extensions.create(EXTENSION_NAME, StructureExtension::class, settings)
-        val rootProjectDefinition = extension.rootProjectDefinition
         settings.gradle.settingsEvaluated {
-            val projectPathMapping = ProjectPathMapping(rootProjectDefinition)
+            val projectPathMapping = ProjectPathMapping(extension.rootProjectDefinition)
             updateTaskPaths(startParameter, projectPathMapping, rootDir)
             if (GradleVersion.current() >= GradleVersion.version("8.8")) {
-                gradle.lifecycle.beforeProject(StructureProjectIsolatedAction(projectPathMapping))
+                gradle.lifecycle.beforeProject(StructureProjectIsolatedAction(projectPathMapping, extension.group))
             } else {
-                gradle.beforeProject(StructureProjectAction(projectPathMapping))
+                gradle.beforeProject(StructureProjectAction(projectPathMapping, extension.group))
             }
         }
     }
