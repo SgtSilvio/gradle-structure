@@ -78,8 +78,3 @@ class StructurePlugin : Plugin<Settings> {
         return "$mappedTaskName:${parts.last()}"
     }
 }
-
-internal class ProjectPathMapping {
-    val gradlePathToShortPath = HashMap<String, String>()
-    val shortPathToFullPath = HashMap<String, String>()
-}
