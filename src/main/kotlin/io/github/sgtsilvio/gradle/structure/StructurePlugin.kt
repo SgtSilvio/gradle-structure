@@ -4,6 +4,7 @@ import org.gradle.StartParameter
 import org.gradle.api.Plugin
 import org.gradle.api.initialization.Settings
 import org.gradle.kotlin.dsl.create
+import org.gradle.util.GradleVersion
 import java.io.File
 
 /**
@@ -18,9 +19,10 @@ class StructurePlugin : Plugin<Settings> {
         settings.gradle.settingsEvaluated {
             val projectPathMapping = ProjectPathMapping(rootProjectDefinition)
             updateTaskPaths(startParameter, projectPathMapping, rootDir)
-            gradle.beforeProject {
-//            gradle.lifecycle.beforeProject {
-                extensions.create(EXTENSION_NAME, StructureProjectExtension::class, projectPathMapping)
+            if (GradleVersion.current() >= GradleVersion.version("8.8")) {
+                gradle.lifecycle.beforeProject(StructureProjectIsolatedAction(projectPathMapping))
+            } else {
+                gradle.beforeProject(StructureProjectAction(projectPathMapping))
             }
         }
     }
