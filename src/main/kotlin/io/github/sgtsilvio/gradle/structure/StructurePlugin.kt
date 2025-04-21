@@ -31,7 +31,7 @@ class StructurePlugin : Plugin<Settings> {
         rootDirectory: File,
     ) {
         val currentProjectShortPath = startParameter.currentDir.relativeToOrNull(rootDirectory)?.let { directoryPath ->
-            projectPathMapping.directoryToShort[directoryPath.path]
+            projectPathMapping.mapDirectoryToShort(directoryPath.path)
         }
         mapTaskPaths(
             startParameter.taskNames,

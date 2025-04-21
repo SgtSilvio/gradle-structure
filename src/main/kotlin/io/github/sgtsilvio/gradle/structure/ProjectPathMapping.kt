@@ -6,8 +6,8 @@ import java.io.File
  * @author Silvio Giebl
  */
 internal class ProjectPathMapping(rootProjectDefinition: ProjectDefinition) {
-    val gradleToShort = HashMap<String, String>()
-    val directoryToShort = HashMap<String, String>()
+    private val gradleToShort = HashMap<String, String>()
+    private val directoryToShort = HashMap<String, String>()
     private val shortToFull = HashMap<String, String>()
 
     init {
@@ -32,6 +32,10 @@ internal class ProjectPathMapping(rootProjectDefinition: ProjectDefinition) {
             fill(projectDefinition, shortPath, fullPath, rootDirectory)
         }
     }
+
+    fun mapGradleToShort(gradlePath: String) = gradleToShort[gradlePath]
+
+    fun mapDirectoryToShort(directoryPath: String) = directoryToShort[directoryPath]
 
     fun mapShortToFull(shortPath: String, currentProjectShortPath: String?): String? {
         val isAbsolute = shortPath.startsWith(':')

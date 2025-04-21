@@ -14,6 +14,6 @@ abstract class StructureProjectExtension @Inject internal constructor(
 ) {
 
     fun path(shortPath: String) =
-        projectPathMapping.mapShortToFull(shortPath, projectPathMapping.gradleToShort[project.path])
+        projectPathMapping.mapShortToFull(shortPath, projectPathMapping.mapGradleToShort(project.path))
             ?: throw IllegalArgumentException("'$shortPath' is not a project path")
 }
