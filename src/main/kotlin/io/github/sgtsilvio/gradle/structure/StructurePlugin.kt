@@ -16,13 +16,19 @@ class StructurePlugin : Plugin<Settings> {
         val rootProjectDefinition = extension.rootProjectDefinition
         settings.gradle.settingsEvaluated {
             val projectPathMapping = ProjectPathMapping()
-            projectPathMapping.fill(rootProjectDefinition, "", "")
+            projectPathMapping.fill(rootProjectDefinition)
             updateTaskPaths(startParameter, rootProjectDefinition)
             gradle.beforeProject {
 //            gradle.lifecycle.beforeProject {
                 extensions.create("structure", StructureProjectExtension::class, projectPathMapping)
             }
         }
+    }
+
+    private fun ProjectPathMapping.fill(rootProjectDefinition: ProjectDefinition) {
+        gradlePathToShortPath[":"] = ":"
+        shortPathToFullPath[":"] = ":"
+        fill(rootProjectDefinition, "", "")
     }
 
     private fun ProjectPathMapping.fill(
