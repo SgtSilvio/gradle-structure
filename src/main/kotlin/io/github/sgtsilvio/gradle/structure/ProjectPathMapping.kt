@@ -1,9 +1,9 @@
 package io.github.sgtsilvio.gradle.structure
 
 internal class ProjectPathMapping {
-    val gradlePathToShortPath = HashMap<String, String>()
-    val directoryPathToShortPath = HashMap<String, String>()
-    val shortPathToFullPath = HashMap<String, String>()
+    val gradleToShort = HashMap<String, String>()
+    val directoryToShort = HashMap<String, String>()
+    val shortToFull = HashMap<String, String>()
 }
 
 internal fun String.resolveProjectPath(other: String) = when {

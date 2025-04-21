@@ -27,9 +27,9 @@ class StructurePlugin : Plugin<Settings> {
     }
 
     private fun ProjectPathMapping.fill(rootProjectDefinition: ProjectDefinition) {
-        gradlePathToShortPath[":"] = ":"
-        directoryPathToShortPath[""] = ":"
-        shortPathToFullPath[":"] = ":"
+        gradleToShort[":"] = ":"
+        directoryToShort[""] = ":"
+        shortToFull[":"] = ":"
         fill(rootProjectDefinition, "", "", rootProjectDefinition.descriptor.projectDir)
     }
 
@@ -42,9 +42,9 @@ class StructurePlugin : Plugin<Settings> {
         for ((pathName, projectDefinition) in parentProjectDefinition.children) {
             val shortPath = "$parentShortPath:$pathName"
             val fullPath = "$parentFullPath:${projectDefinition.descriptor.name}"
-            gradlePathToShortPath[projectDefinition.descriptor.path] = shortPath
-            directoryPathToShortPath[projectDefinition.descriptor.projectDir.toRelativeString(rootDirectory)] = shortPath
-            shortPathToFullPath[shortPath] = fullPath
+            gradleToShort[projectDefinition.descriptor.path] = shortPath
+            directoryToShort[projectDefinition.descriptor.projectDir.toRelativeString(rootDirectory)] = shortPath
+            shortToFull[shortPath] = fullPath
             fill(projectDefinition, shortPath, fullPath, rootDirectory)
         }
     }
@@ -55,10 +55,20 @@ class StructurePlugin : Plugin<Settings> {
         rootDirectory: File,
     ) {
         val currentProjectShortPath = startParameter.currentDir.relativeToOrNull(rootDirectory)?.let { directoryPath ->
-            projectPathMapping.directoryPathToShortPath[directoryPath.path]
+            projectPathMapping.directoryToShort[directoryPath.path]
         }
-        mapTaskPaths(startParameter.taskNames, projectPathMapping, currentProjectShortPath, startParameter::setTaskNames)
-        mapTaskPaths(startParameter.excludedTaskNames, projectPathMapping, currentProjectShortPath, startParameter::setExcludedTaskNames)
+        mapTaskPaths(
+            startParameter.taskNames,
+            projectPathMapping,
+            currentProjectShortPath,
+            startParameter::setTaskNames,
+        )
+        mapTaskPaths(
+            startParameter.excludedTaskNames,
+            projectPathMapping,
+            currentProjectShortPath,
+            startParameter::setExcludedTaskNames,
+        )
     }
 
     private inline fun mapTaskPaths(
@@ -88,7 +98,7 @@ class StructurePlugin : Plugin<Settings> {
             currentProjectShortPath == null -> return taskPath
             else -> currentProjectShortPath.resolveProjectPath(projectPath)
         }
-        val projectFullPath = projectPathMapping.shortPathToFullPath[absoluteProjectPath] ?: return taskPath
+        val projectFullPath = projectPathMapping.shortToFull[absoluteProjectPath] ?: return taskPath
         val taskName = taskPath.substring(projectPathEndIndex + 1)
         return "$projectFullPath:$taskName"
         // TODO if was relative, make relative again
