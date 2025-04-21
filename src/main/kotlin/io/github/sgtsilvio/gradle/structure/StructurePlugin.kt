@@ -16,36 +16,12 @@ class StructurePlugin : Plugin<Settings> {
         val extension = settings.extensions.create("structure", StructureExtension::class, settings)
         val rootProjectDefinition = extension.rootProjectDefinition
         settings.gradle.settingsEvaluated {
-            val projectPathMapping = ProjectPathMapping()
-            projectPathMapping.fill(rootProjectDefinition)
+            val projectPathMapping = ProjectPathMapping(rootProjectDefinition)
             updateTaskPaths(startParameter, projectPathMapping, rootDir)
             gradle.beforeProject {
 //            gradle.lifecycle.beforeProject {
                 extensions.create("structure", StructureProjectExtension::class, projectPathMapping)
             }
-        }
-    }
-
-    private fun ProjectPathMapping.fill(rootProjectDefinition: ProjectDefinition) {
-        gradleToShort[":"] = ":"
-        directoryToShort[""] = ":"
-        shortToFull[":"] = ":"
-        fill(rootProjectDefinition, "", "", rootProjectDefinition.descriptor.projectDir)
-    }
-
-    private fun ProjectPathMapping.fill(
-        parentProjectDefinition: ProjectDefinition,
-        parentShortPath: String,
-        parentFullPath: String,
-        rootDirectory: File,
-    ) {
-        for ((pathName, projectDefinition) in parentProjectDefinition.children) {
-            val shortPath = "$parentShortPath:$pathName"
-            val fullPath = "$parentFullPath:${projectDefinition.descriptor.name}"
-            gradleToShort[projectDefinition.descriptor.path] = shortPath
-            directoryToShort[projectDefinition.descriptor.projectDir.toRelativeString(rootDirectory)] = shortPath
-            shortToFull[shortPath] = fullPath
-            fill(projectDefinition, shortPath, fullPath, rootDirectory)
         }
     }
 

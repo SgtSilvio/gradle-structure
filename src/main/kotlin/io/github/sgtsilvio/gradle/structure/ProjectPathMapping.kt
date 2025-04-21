@@ -1,9 +1,34 @@
 package io.github.sgtsilvio.gradle.structure
 
-internal class ProjectPathMapping {
+import java.io.File
+
+internal class ProjectPathMapping(rootProjectDefinition: ProjectDefinition) {
     val gradleToShort = HashMap<String, String>()
     val directoryToShort = HashMap<String, String>()
     val shortToFull = HashMap<String, String>()
+
+    init {
+        gradleToShort[":"] = ":"
+        directoryToShort[""] = ":"
+        shortToFull[":"] = ":"
+        fill(rootProjectDefinition, "", "", rootProjectDefinition.descriptor.projectDir)
+    }
+
+    private fun ProjectPathMapping.fill(
+        parentProjectDefinition: ProjectDefinition,
+        parentShortPath: String,
+        parentFullPath: String,
+        rootDirectory: File,
+    ) {
+        for ((pathName, projectDefinition) in parentProjectDefinition.children) {
+            val shortPath = "$parentShortPath:$pathName"
+            val fullPath = "$parentFullPath:${projectDefinition.descriptor.name}"
+            gradleToShort[projectDefinition.descriptor.path] = shortPath
+            directoryToShort[projectDefinition.descriptor.projectDir.toRelativeString(rootDirectory)] = shortPath
+            shortToFull[shortPath] = fullPath
+            fill(projectDefinition, shortPath, fullPath, rootDirectory)
+        }
+    }
 }
 
 internal fun String.resolveProjectPath(other: String) = when {
