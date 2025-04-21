@@ -16,6 +16,7 @@ plugins {
 }
 
 structure {
+    group = "org.example"
     rootProject("example-app") {
         project("model")
         project("client") {
@@ -38,7 +39,8 @@ This results in the following fully qualified project names:
 - `example-app-server-database`
 - `example-app-server-rest-api`
 
-Even though all project names are fully qualified, you can still use short project names in task paths on the command line. The following list shows the path for the `build` task for each project:
+Even though all project names are fully qualified, you can still use short project names in task paths on the command line.
+The following list shows the path of the `build` task for each project:
 - `./gradlew :build`
 - `./gradlew :model:build`
 - `./gradlew :client:build`
