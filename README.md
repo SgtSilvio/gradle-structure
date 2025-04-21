@@ -39,8 +39,8 @@ This results in the following fully qualified project names:
 - `example-app-server-database`
 - `example-app-server-rest-api`
 
-Even though all project names are fully qualified, you can still use short project names in task paths on the command line.
-The following list shows the path of the `build` task for each project:
+Even though all project names are fully qualified, you can still use short project names in task paths.
+The following list shows the command line path of the `build` task for each project:
 - `./gradlew :build`
 - `./gradlew :model:build`
 - `./gradlew :client:build`
@@ -48,3 +48,11 @@ The following list shows the path of the `build` task for each project:
 - `./gradlew :server:build`
 - `./gradlew :server:database:build`
 - `./gradlew :server:rest-api:build`
+
+The following shows how the short path can be used for project dependencies in `build.gradle.kts`:
+
+```kotlin
+dependencies {
+    implementation(project(structure.path(":server:database")))
+}
+```
