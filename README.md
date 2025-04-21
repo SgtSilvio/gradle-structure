@@ -12,7 +12,7 @@ Gradle plugin to ease structuring and naming projects.
 
 ```kotlin
 plugins {
-    id("io.github.sgtsilvio.gradle.structure") version "0.1.0"
+    id("io.github.sgtsilvio.gradle.structure") version "0.2.0"
 }
 
 structure {
