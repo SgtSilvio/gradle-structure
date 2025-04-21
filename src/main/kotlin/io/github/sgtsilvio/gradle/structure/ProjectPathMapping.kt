@@ -2,6 +2,7 @@ package io.github.sgtsilvio.gradle.structure
 
 internal class ProjectPathMapping {
     val gradlePathToShortPath = HashMap<String, String>()
+    val directoryPathToShortPath = HashMap<String, String>()
     val shortPathToFullPath = HashMap<String, String>()
 }
 
