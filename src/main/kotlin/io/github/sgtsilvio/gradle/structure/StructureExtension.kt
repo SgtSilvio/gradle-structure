@@ -34,21 +34,17 @@ abstract class ProjectDefinition @Inject constructor(
 
     internal val children = HashMap<String, ProjectDefinition>()
 
-    private fun getOrAddChild(name: String): ProjectDefinition {
-        return children.getOrPut(name) {
-            val childPath = "${if (descriptor.path == ":") "" else descriptor.path}:${descriptor.name}-$name"
-            settings.include(childPath)
-            val childDescriptor = settings.project(childPath)
-            childDescriptor.projectDir = descriptor.projectDir.resolve(name)
-            objectFactory.newInstance<ProjectDefinition>(childDescriptor, settings)
-        }
+    private fun getOrAddChild(name: String) = children.getOrPut(name) {
+        val childPath = "${if (descriptor.path == ":") "" else descriptor.path}:${descriptor.name}-$name"
+        settings.include(childPath)
+        val childDescriptor = settings.project(childPath)
+        childDescriptor.projectDir = descriptor.projectDir.resolve(name)
+        objectFactory.newInstance<ProjectDefinition>(childDescriptor, settings)
     }
 
     fun project(name: String) {
         getOrAddChild(name)
     }
 
-    fun project(name: String, configuration: Action<in ProjectDefinition>) {
-        configuration.execute(getOrAddChild(name))
-    }
+    fun project(name: String, configuration: Action<in ProjectDefinition>) = configuration.execute(getOrAddChild(name))
 }
