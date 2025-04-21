@@ -10,10 +10,11 @@ import javax.inject.Inject
 @NonExtensible
 abstract class StructureProjectExtension @Inject internal constructor(
     private val projectPathMapping: ProjectPathMapping,
-    private val project: Project,
+    project: Project,
 ) {
 
-    fun path(shortPath: String) =
-        projectPathMapping.mapShortToFull(shortPath, projectPathMapping.mapGradleToShort(project.path))
-            ?: throw IllegalArgumentException("'$shortPath' is not a project path")
+    private val currentProjectShortPath = projectPathMapping.mapGradleToShort(project.path)
+
+    fun path(shortPath: String) = projectPathMapping.mapShortToFull(shortPath, currentProjectShortPath)
+        ?: throw IllegalArgumentException("'$shortPath' is not a project path")
 }
