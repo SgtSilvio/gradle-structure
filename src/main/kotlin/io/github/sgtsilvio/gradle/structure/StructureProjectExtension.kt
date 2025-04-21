@@ -13,17 +13,7 @@ abstract class StructureProjectExtension @Inject internal constructor(
     private val project: Project,
 ) {
 
-    fun path(shortPath: String): String {
-        val isAbsolute = shortPath.startsWith(':')
-        val absoluteShortPath = if (isAbsolute) shortPath else {
-            val currentProjectShortPath = projectPathMapping.gradleToShort[project.path]
-                ?: throw IllegalStateException("$project was not defined by the structure plugin")
-            currentProjectShortPath.resolveProjectPath(shortPath)
-        }
-        val fullPath = projectPathMapping.shortToFull[absoluteShortPath]
+    fun path(shortPath: String) =
+        projectPathMapping.mapShortToFull(shortPath, projectPathMapping.gradleToShort[project.path])
             ?: throw IllegalArgumentException("'$shortPath' is not a project path")
-        return if (isAbsolute) fullPath else {
-            fullPath.split(':').takeLast(shortPath.count { it == ':' } + 1).joinToString(":")
-        }
-    }
 }
