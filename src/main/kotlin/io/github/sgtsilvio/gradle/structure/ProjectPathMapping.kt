@@ -2,6 +2,9 @@ package io.github.sgtsilvio.gradle.structure
 
 import java.io.File
 
+/**
+ * @author Silvio Giebl
+ */
 internal class ProjectPathMapping(rootProjectDefinition: ProjectDefinition) {
     val gradleToShort = HashMap<String, String>()
     val directoryToShort = HashMap<String, String>()

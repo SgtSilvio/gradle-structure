@@ -8,6 +8,9 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.kotlin.dsl.newInstance
 import javax.inject.Inject
 
+/**
+ * @author Silvio Giebl
+ */
 @NonExtensible
 abstract class StructureExtension @Inject constructor(settings: Settings, objectFactory: ObjectFactory) {
 
