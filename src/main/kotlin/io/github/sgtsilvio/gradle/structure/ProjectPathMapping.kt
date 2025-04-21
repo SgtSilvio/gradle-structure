@@ -14,7 +14,7 @@ internal class ProjectPathMapping(rootProjectDefinition: ProjectDefinition) {
         fill(rootProjectDefinition, "", "", rootProjectDefinition.descriptor.projectDir)
     }
 
-    private fun ProjectPathMapping.fill(
+    private fun fill(
         parentProjectDefinition: ProjectDefinition,
         parentShortPath: String,
         parentFullPath: String,
