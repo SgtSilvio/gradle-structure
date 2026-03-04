@@ -1,3 +1,4 @@
+import org.gradle.plugin.compatibility.compatibility
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 plugins {
@@ -48,6 +49,11 @@ gradlePlugin {
             id = "$group.$name"
             implementationClass = "$group.$name.StructurePlugin"
             tags = listOf("project-structure", "multi-project", "subprojects", "project-naming")
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
         }
     }
 }
